@@ -10,7 +10,7 @@ function App() {
     return (
         <div className="min-h-screen flex flex-col bg-white dark:bg-[#202c37]">        
             <Header />
-            <div className="flex-grow">
+            <div className="flex-grow w-full h-full flex justify-center items-start px-4 py-8">
                 <Routes>
                     <Route path="/" element={<Home />} />
                     <Route path="/details" element={<CountryDetails />} />
