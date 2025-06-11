@@ -3,11 +3,11 @@ import { MoonIcon } from "@heroicons/react/24/solid";
 import { useEffect, useState } from "react";
 
 
-function Header(){
+function Header() {
     const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
-    
-    useEffect(()=>{
-        
+
+    useEffect(() => {
+
         localStorage.setItem("theme", theme);
 
         const htmlElement = document.querySelector("html");
@@ -19,12 +19,14 @@ function Header(){
 
     return (
         <div className="h-20 flex justify-between items-center px-4 bg-white shadow-lg dark:bg-[#2b3945]">
-            <div className="text-black font-bold dark:text-white">
-                <h1>Where in the world?</h1>
-            </div>
-            <div className="flex justify-center items-center gap-2 text-black font-normal dark:text-white cursor-pointer" onClick={()=> setTheme(theme === "dark" ? "light" : "dark")}>
-                {theme === "dark" ? <MoonIcon className="h-5" /> : <SunIcon className="h-5" />}
-                <p className="">{theme=== 'dark' ? 'Dark' : 'Light'} Mode</p>
+            <div className="flex justify-between items-center max-w-[1400px] w-[80%] mx-auto">
+                <div className="text-black font-bold dark:text-white">
+                    <h1>Where in the world?</h1>
+                </div>
+                <div className="flex justify-center items-center gap-2 text-black font-normal dark:text-white cursor-pointer" onClick={() => setTheme(theme === "dark" ? "light" : "dark")}>
+                    {theme === "dark" ? <MoonIcon className="h-5" /> : <SunIcon className="h-5" />}
+                    <p className="">{theme === 'dark' ? 'Dark' : 'Light'} Mode</p>
+                </div>
             </div>
         </div>
     )

@@ -38,10 +38,14 @@ function Home() {
                 </div>
 
                 <div className="flex gap-10 md:justify-between justify-center flex-wrap pt-10">
-                    {countryData.map((country, index) => (
-                        <CountryListing key={index} country={country} />
-                    ))}
-                    
+                    {
+                        countryData && (
+                            countryData.map((country, index) => (
+                                <CountryListing key={index} country={country} />
+                            ))
+                        )
+                    }
+
                 </div>
 
 

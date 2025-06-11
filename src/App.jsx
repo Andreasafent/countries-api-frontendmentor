@@ -13,7 +13,7 @@ function App() {
             <div className="flex-grow w-full h-full flex justify-center items-start px-4 py-8">
                 <Routes>
                     <Route path="/" element={<Home />} />
-                    <Route path="/details" element={<CountryDetails />} />
+                    <Route path="/details/:country" element={<CountryDetails />} />
                 </Routes>
             </div>
 
