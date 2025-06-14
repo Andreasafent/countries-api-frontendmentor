@@ -18,8 +18,8 @@ function Header() {
 
 
     return (
-        <div className="h-20 flex justify-between items-center px-4 bg-white shadow-lg dark:bg-[#2b3945]">
-            <div className="flex justify-between items-center max-w-[1400px] w-[80%] mx-auto">
+        <div className="h-20 flex justify-center items-center px-4 bg-white shadow-lg dark:bg-[#2b3945] w-full">
+            <div className="flex justify-between items-center max-w-[1400px] w-full">
                 <div className="text-black font-bold dark:text-white">
                     <h1>Where in the world?</h1>
                 </div>
