@@ -7,6 +7,8 @@ function CountryDetails() {
 
     const { country } = useParams();
     const [countryData, setCountryData] = useState([]);
+    const [borders, setBorders] = useState([]);
+    const [borderCountryNames, setborderCountryNames] = useState([]);
 
     const endpoint = `https://restcountries.com/v3.1/name/${country}?fullText=true`;
 
@@ -14,6 +16,7 @@ function CountryDetails() {
         axios.get(endpoint)
             .then(response => {
                 setCountryData(response.data[0])
+                setBorders(response.data[0].borders);
             })
             .catch(error => {
                 console.error('There was an error fetching the data! ', error)
@@ -21,33 +24,78 @@ function CountryDetails() {
             .finally(() => {
                 console.log('Successful');
             })
-    }, []);
+    }, [endpoint]);
 
-    // useEffect(()=>{
-    //     console.log(countryData)
-    // }, [countryData]);
+    useEffect(() => {
+        if (!borders?.length) return;
+
+
+        // const borderCountries = [];
+        const url = `https://restcountries.com/v3.1/alpha?codes=${borders.join(',')}`
+
+        axios.get(url)
+            .then(response => {
+                setborderCountryNames(response.data.map(e => e.name.common))
+            })
+            .catch(console.error)
+            .finally(
+                console.log('Successful')
+            )
+    }, [borders]);
+
+    useEffect(() => {
+        console.log('borders: ', borderCountryNames);
+    }, [borderCountryNames]);
 
 
     //helpers 
 
-    const getNativeNames = (nameObj) =>{
+    const getNativeNames = (nameObj) => {
         return nameObj?.nativeName
             ? Object.values(nameObj.nativeName).map((n) => n.common)
             : [];
     }
 
-    const getCurrencies = (currencyObj)=>{
-        return currencyObj 
-            ? Object.values(currencyObj).map((c)=>c.name)
+    const getCurrencies = (currencyObj) => {
+        return currencyObj
+            ? Object.values(currencyObj).map((c) => c.name)
             : [];
     }
 
-    const getBorderCountries = (borderObj)=>{
+    const getBorderCountries = (borderObj) => {
         return borderObj
-            ? Object.values(borderObj).map((c)=>c)
+            ? Object.values(borderObj).map((c) => c)
             : [];
     }
-    
+
+    // const codes = getBorderCountries(countryData.borders);
+    // const codesKeys = codes.join(',')
+
+    // useEffect(() => {
+
+    //     // if (!codesKeys) return;
+
+    //     const url = `https://restcountries.com/v3.1/alpha?codes=${codesKeys.join(',')}`;
+    //     axios.get(url)
+    //         .then(response => {
+    //             setBorders(response.data);
+    //         })
+    //         .catch(console.error)
+    //         .finally(
+    //             console.log(borders)
+    //         )
+    // }, [countryData]);
+
+    // useEffect(() => {
+    //     const borderArr = getBorderCountries(countryData.borders);
+    //     if (!borderArr.length) console.log('empty');
+
+    //     const url = `https://restcountries.com/v3.1/alpha?codes=${borderArr.join(",")}`;
+    //     axios.get(url)
+    //         .then(res => setBorders(res.data))
+    //         .catch(console.error);
+    // }, [countryData.borders]);
+
 
 
 
@@ -91,12 +139,23 @@ function CountryDetails() {
                                     <p className="font-light"><span className="font-normal">Currencies: </span>{getCurrencies(countryData.currencies).join(', ') || "N/A"}</p>
                                 </div>
 
-                                <div className="flex flex-col justify-start text-black dark:text-white">
-                                    <h2 className="font-normal">Border Countries:</h2>
-
-                                    <div className="flex justify-center items-center btn w-[150px] h-10  dark:bg-[#2b3945] rounded-sm shadow-xl">
-                                        {getBorderCountries(countryData.borders.join(' - '))}
-                                    </div>
+                                <div className="flex flex-col justify-start text-black dark:text-white gap-3">
+                                    {
+                                        borderCountryNames.length!=0 && (
+                                            <>
+                                                <h2 className="font-normal">Border Countries:</h2>
+                                                <div className="flex flex-wrap justify-start gap-3">
+                                                    {borderCountryNames.map((country, key) => {
+                                                        return (
+                                                            <div key={key} className="flex justify-center items-center btn w-[100px] h-10  dark:bg-[#2b3945] rounded-sm shadow-xl">
+                                                                {country}
+                                                            </div>
+                                                        )
+                                                    })}
+                                                </div>
+                                            </>
+                                        )
+                                    }
                                 </div>
                             </div>
 
