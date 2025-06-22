@@ -8,13 +8,16 @@ import debounce from "lodash.debounce";
 function Home() {
 
     let url = 'https://restcountries.com/v3.1/all?fields=name,capital,region,population,flags';
-    const [countryData, setCountryData] = useState([]);
+    const [allCountries, setAllCountries] = useState([]);
+    const [countryData, setCountryData] = useState([]);    
     const [value, setValue] = useState('');
     const [selectedContinent, setSelectedContinent] = useState(localStorage.getItem('filter') || 'all');
 
-    const debouncedSetQuery = useMemo(() => {
+
+    const debouncedValue = useMemo(() => {
         return debounce(setValue, 500);
     }, []);
+
 
     useEffect(() => {
         if (value?.length === 0 ) {
@@ -41,11 +44,13 @@ function Home() {
         }
     }, [value]);
 
+
     useEffect(() => {
         return () => {
-            debouncedSetQuery.cancel();
+            debouncedValue.cancel();
         };
-    }, [debouncedSetQuery]);
+    }, [debouncedValue]);
+
 
     useEffect(()=>{
         if (selectedContinent !== 'all') {
@@ -75,7 +80,7 @@ function Home() {
                 <div className="flex flex-col gap-5 sm:flex-row sm:justify-between sm:items-between  items-start ">
 
                     <SearchBar
-                        onSearch={debouncedSetQuery}
+                        onSearch={debouncedValue}
                     />
 
                     <Filter
