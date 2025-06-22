@@ -10,12 +10,16 @@ const continents = [
 ]
 
 
-function Filter() {
+function Filter({ selectedContinent, setSelectedContinent }) {
 
     const [isShownFilter, setIsShownFilter] = useState(false);
-    const [selectedContinent, setSelectedContinent] = useState(localStorage.getItem('filter') || 'all');
 
-
+    const handleChange = (continent) => {
+        // console.log(`Selected continent: ${continent}`);
+        setSelectedContinent(continent);
+        localStorage.setItem('filter', selectedContinent);
+        setIsShownFilter(false);
+    }
 
     return (
         <div
@@ -37,12 +41,7 @@ function Filter() {
                             <li
                                 key={index}
                                 className="px-4 py-2 hover:bg-gray-100 dark:hover:bg-[#3b4a5c] cursor-pointer"
-                                onClick={() => {
-                                    console.log(`Selected continent: ${continent}`);
-                                    setSelectedContinent(continent);
-                                    localStorage.setItem('filter', continent);
-                                    setIsShownFilter(false);
-                                }}
+                                onClick={()=>handleChange(continent)}
                             >
                                 {continent}
                             </li>

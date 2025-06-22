@@ -1,23 +1,23 @@
 import SearchBar from "../components/SearchBar";
 import Filter from "../components/FIlter";
 import CountryListing from "../components/CountryListing";
-import axios from 'axios'; // Uncomment if you need to use axios directly in this file
+import axios from 'axios';
 import { useEffect, useMemo, useState } from "react";
 import debounce from "lodash.debounce";
 
 function Home() {
 
     let url = 'https://restcountries.com/v3.1/all?fields=name,capital,region,population,flags';
-    const [countryData, setCountryData] = useState([]); // Assuming you have a state management setup like useState or useContext
+    const [countryData, setCountryData] = useState([]);
     const [value, setValue] = useState('');
+    const [selectedContinent, setSelectedContinent] = useState(localStorage.getItem('filter') || 'all');
 
     const debouncedSetQuery = useMemo(() => {
-        return debounce(setValue, 1000);
+        return debounce(setValue, 500);
     }, []);
 
-
     useEffect(() => {
-        if (value?.length < 3) {
+        if (value?.length === 0 ) {
             axios.get(url)
                 .then(response => {
                     setCountryData(response.data);
@@ -28,7 +28,7 @@ function Home() {
                 .finally(() => {
                     console.log("Fetch attempt completed.");
                 });
-        } else {
+        } else if( value?.length >= 3) {
             console.log("Searching for:", value);
             axios.get(`https://restcountries.com/v3.1/name/${value}?fields=name,capital,region,population,flags`)
                 .then(response => {
@@ -43,9 +43,30 @@ function Home() {
 
     useEffect(() => {
         return () => {
-            debouncedSetQuery.cancel(); // cancel pending debounce if component unmounts
+            debouncedSetQuery.cancel();
         };
     }, [debouncedSetQuery]);
+
+    useEffect(()=>{
+        if (selectedContinent !== 'all') {
+            axios.get(`https://restcountries.com/v3.1/region/${selectedContinent.toLowerCase()}?fields=name,capital,region,population,flags`)
+                .then(response => {
+                    setCountryData(response.data);
+                })
+                .catch(error => {
+                    console.error("There was an error fetching the continent data!", error);
+                });
+        } else {
+            axios.get(url)
+                .then(response => {
+                    setCountryData(response.data);
+                })
+                .catch(error => {
+                    console.error("There was an error fetching the data!", error);
+                });
+        }
+        console.log("Selected continent:", selectedContinent);
+    },[selectedContinent]);
 
 
     return (
@@ -57,7 +78,10 @@ function Home() {
                         onSearch={debouncedSetQuery}
                     />
 
-                    <Filter />
+                    <Filter
+                        selectedContinent={selectedContinent}
+                        setSelectedContinent={setSelectedContinent}
+                    />
 
                 </div>
 
