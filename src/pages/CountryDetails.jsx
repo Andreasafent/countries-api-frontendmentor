@@ -116,7 +116,7 @@ function CountryDetails() {
 
                         <>
                             <div className="flex justify-center items-center flex-col gap-5 w-full h-full">
-                                <img src={countryData.flags.png} alt={countryData.flags.alt} />
+                                <img src={countryData.flags.png} alt={countryData.flags.alt} className="rounded-lg shadow-xl"/>
                             </div>
 
                             <div className="flex flex-col justify-start gap-5">
@@ -147,9 +147,12 @@ function CountryDetails() {
                                                 <div className="flex flex-wrap justify-start gap-3">
                                                     {borderCountryNames.map((country, key) => {
                                                         return (
-                                                            <div key={key} className="flex justify-center items-center btn w-[100px] h-10  dark:bg-[#2b3945] rounded-sm shadow-xl">
+                                                            <Link to={`/details/${country}`} key={key}>
+                                                                <div key={key} className="flex justify-center items-center btn w-[100px]  dark:bg-[#2b3945] rounded-sm shadow-xl p-2 text-center">
                                                                 {country}
                                                             </div>
+                                                            </Link>
+                                                            
                                                         )
                                                     })}
                                                 </div>
