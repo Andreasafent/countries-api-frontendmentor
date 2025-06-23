@@ -8,8 +8,7 @@ import debounce from "lodash.debounce";
 function Home() {
 
     let url = 'https://restcountries.com/v3.1/all?fields=name,capital,region,population,flags';
-    const [allCountries, setAllCountries] = useState([]);
-    const [countryData, setCountryData] = useState([]);    
+    const [countryData, setCountryData] = useState([]);
     const [value, setValue] = useState('');
     const [selectedContinent, setSelectedContinent] = useState(localStorage.getItem('filter') || 'all');
 
@@ -20,29 +19,30 @@ function Home() {
 
 
     useEffect(() => {
-        if (value?.length === 0 ) {
-            axios.get(url)
-                .then(response => {
+        const fetchData = async () => {
+            try {
+                let response;
+                if (value.length >= 3) {
+                    response = await axios.get(`https://restcountries.com/v3.1/name/${value}?fields=name,capital,region,population,flags`);
+                    const filtered = selectedContinent !== 'all'
+                        ? response.data.filter(c => c.region.toLowerCase() === selectedContinent.toLowerCase())
+                        : response.data;
+                    setCountryData(filtered);
+                } else {
+                    const regionURL = selectedContinent !== 'all'
+                        ? `https://restcountries.com/v3.1/region/${selectedContinent.toLowerCase()}?fields=name,capital,region,population,flags`
+                        : url;
+                    response = await axios.get(regionURL);
                     setCountryData(response.data);
-                })
-                .catch(error => {
-                    console.error("There was an error fetching the data!", error);
-                })
-                .finally(() => {
-                    console.log("Fetch attempt completed.");
-                });
-        } else if( value?.length >= 3) {
-            console.log("Searching for:", value);
-            axios.get(`https://restcountries.com/v3.1/name/${value}?fields=name,capital,region,population,flags`)
-                .then(response => {
-                    console.log("Search results:", response.data);
-                    setCountryData(response.data);
-                })
-                .catch(error => {
-                    console.error("There was an error fetching the search results!", error);
-                });
-        }
-    }, [value]);
+                }
+            } catch (err) {
+                console.error("Fetch error", err);
+                setCountryData([]);
+            }
+        };
+
+        fetchData();
+    }, [value, selectedContinent]);
 
 
     useEffect(() => {
@@ -50,29 +50,6 @@ function Home() {
             debouncedValue.cancel();
         };
     }, [debouncedValue]);
-
-
-    useEffect(()=>{
-        if (selectedContinent !== 'all') {
-            axios.get(`https://restcountries.com/v3.1/region/${selectedContinent.toLowerCase()}?fields=name,capital,region,population,flags`)
-                .then(response => {
-                    setCountryData(response.data);
-                })
-                .catch(error => {
-                    console.error("There was an error fetching the continent data!", error);
-                });
-        } else {
-            axios.get(url)
-                .then(response => {
-                    setCountryData(response.data);
-                })
-                .catch(error => {
-                    console.error("There was an error fetching the data!", error);
-                });
-        }
-        console.log("Selected continent:", selectedContinent);
-    },[selectedContinent]);
-
 
     return (
         <>
@@ -92,10 +69,12 @@ function Home() {
 
                 <div className="flex gap-10 md:justify-between justify-center flex-wrap pt-10">
                     {
-                        countryData && (
+                        countryData.length > 0 ? (
                             countryData.map((country, index) => (
                                 <CountryListing key={index} country={country} />
                             ))
+                        ) : (
+                            <p className="text-center text-gray-500">No countries found.</p>
                         )
                     }
 

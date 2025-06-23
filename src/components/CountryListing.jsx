@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 function CountryListing({ country }) {
     return (
-        <div className="flex flex-col w-full sm:w-75 bg-white dark:bg-[#2b3945] rounded-md shadow-md">
+        <div className="flex flex-col max-w-[300px] sm:w-75 bg-white dark:bg-[#2b3945] rounded-md shadow-md">
             <Link to={`/details/${country.name.common}`} className="w-full h-50">
                 <img src={country.flags.png} alt="Country Flag" className="w-full h-50 object-cover rounded-md shadow-md" />
             </Link>
